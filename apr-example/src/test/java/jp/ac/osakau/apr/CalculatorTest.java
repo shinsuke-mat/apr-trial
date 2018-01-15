@@ -16,6 +16,11 @@ public class CalculatorTest {
 	@Test
 	public void test03() {
 		Calculator c = new Calculator();
-		assertEquals(0, c.fact(0));
+		assertEquals(0, c.fact(1));
+	}
+	@Test
+	public void test04() {
+		Calculator c = new Calculator();
+		assertEquals(1, c.fact(-10));
 	}
 }
