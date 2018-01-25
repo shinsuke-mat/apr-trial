@@ -15,7 +15,7 @@ fi
 
 ###
 echo -e "${RED}>> Build astor.jar${RESET}"
-mvn -f astor package -DskipTests=true
+mvn -f astor/pom.xml package -DskipTests=true -o
 
 ###
 echo -e "${RED}>> Confirm astor.jar${RESET}"
@@ -28,7 +28,7 @@ ASTOR_JAR=$(ls astor/target/*jar-with-dependencies.jar -1 --color=never)
 
 ###
 echo -e "${RED}>> Compile and test an example project (math_70)${RESET}"
-mvn -f astor/examples/math_70 test
+mvn -f astor/examples/math_70/pom.xml test
 ### expected: Tests run: 2181, Failures: 0, Errors: 1, Skipped: 0
 
 ### 
@@ -44,10 +44,10 @@ java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
   -dependencies astor/examples/libs/junit-4.4.jar \
   -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true
 
-
+exit
 
 ########
-java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
+java -cp target/astor-0.0.2-SNAPSHOT-jar-with-dependencies.jar fr.inria.main.evolution.AstorMain \
   -location examples/math_70 \
   -mode jgenprog \
   -scope package \
@@ -56,8 +56,8 @@ java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
   -srctestfolder /src/test/java/ \
   -binjavafolder /target/classes \
   -bintestfolder /target/test-classes \
+  -dependencies examples/libs/junit-4.4.jar \
   -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true
-  -dependencies astor/examples/libs/junit-4.4.jar \
 
 
 
@@ -87,7 +87,8 @@ fr.inria.main.evolution.AstorMain.java
 -mode jgenprog -scope package -failing
 org.apache.commons.math.analysis.solvers.BisectionSolverTest
 -dependencies ./examples/libs/junit-4.4.jar
--srcjavafolder /src/java/ -srctestfolder /src/test/
+-srcjavafolder /src/java/
+-srctestfolder /src/test/
 -binjavafolder /target/classes
 -bintestfolder /target/test-classes
 -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true
