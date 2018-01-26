@@ -14,26 +14,23 @@ else
 fi
 
 ###
-echo -e "${RED}>> Build astor.jar${RESET}"
-mvn -f astor/pom.xml package -DskipTests=true
-
-###
-echo -e "${RED}>> Confirm astor.jar${RESET}"
-if [ $(ls astor/target/*jar-with-dependencies.jar -1 | wc -l) -ne 1 ]; then
-  echo -e "${RED}>> maven build failed${RESET}"
-  exit 1
-fi
-
-### !!! 相対パスだとfail (NullPointerException) するので注意！！！！！！
-ASTOR_JAR=$(ls astor/target/*jar-with-dependencies.jar -1 --color=never | xargs readlink -f)
+echo -e "${RED}>> Compile astor${RESET}"
+mvn -f astor/pom.xml clean compile
+### do not use 'mvn package'
 
 ###
 echo -e "${RED}>> Compile and test an example project (math_70)${RESET}"
-mvn -f astor/examples/math_70/pom.xml test
+mvn -f astor/examples/math_70/pom.xml clean compile test
 ### expected: Tests run: 2181, Failures: 0, Errors: 1, Skipped: 0
 
+###
+echo -e "${RED}>> Retrieve dependencies${RESET}"
+mvn -f astor/pom.xml dependency:build-classpath \
+  | egrep -v "(^\[INFO\]|^\[WARNING\])" \
+  | tee /tmp/astor-classpath.txt
+
 ### 
-java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
+java -cp $(cat /tmp/astor-classpath.txt):astor/target/classes fr.inria.main.evolution.AstorMain \
   -location astor/examples/math_70 \
   -mode jgenprog \
   -scope package \
