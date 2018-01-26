@@ -15,7 +15,7 @@ fi
 
 ###
 echo -e "${RED}>> Build astor.jar${RESET}"
-mvn -f astor/pom.xml package -DskipTests=true -o
+mvn -f astor/pom.xml package -DskipTests=true
 
 ###
 echo -e "${RED}>> Confirm astor.jar${RESET}"
@@ -24,7 +24,8 @@ if [ $(ls astor/target/*jar-with-dependencies.jar -1 | wc -l) -ne 1 ]; then
   exit 1
 fi
 
-ASTOR_JAR=$(ls astor/target/*jar-with-dependencies.jar -1 --color=never)
+### !!! 相対パスだとfail (NullPointerException) するので注意！！！！！！
+ASTOR_JAR=$(ls astor/target/*jar-with-dependencies.jar -1 --color=never | xargs readlink -f)
 
 ###
 echo -e "${RED}>> Compile and test an example project (math_70)${RESET}"
@@ -45,7 +46,67 @@ java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
   -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true
 
 exit
+################################################################################
 
+java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
+  -location apr-example \
+  -mode jgenprog \
+  -scope package \
+  -failing jp.ac.osakau.apr.RepairMeTest \
+  -srcjavafolder /src/main/java/ \
+  -srctestfolder /src/test/java/ \
+  -binjavafolder /target/classes \
+  -bintestfolder /target/test-classes \
+  -dependencies astor/examples/libs/junit-4.4.jar \
+  -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true 
+
+java -cp $ASTOR_JAR fr.inria.main.evolution.AstorMain \
+  -location astor/examples/math_70 \
+  -mode jgenprog \
+  -scope package \
+  -failing org.apache.commons.math.analysis.solvers.BisectionSolverTest \
+  -srcjavafolder /src/main/java/ \
+  -srctestfolder /src/test/java/ \
+  -binjavafolder /target/classes \
+  -bintestfolder /target/test-classes \
+  -dependencies astor/examples/libs/junit-4.4.jar \
+  -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true 
+
+java -cp /home/shin/apr-trial/astor/target/astor-0.0.2-SNAPSHOT-jar-with-dependencies.jar fr.inria.main.evolution.AstorMain \
+  -location astor/examples/math_70 \
+  -mode jgenprog \
+  -scope package \
+  -failing org.apache.commons.math.analysis.solvers.BisectionSolverTest \
+  -srcjavafolder /src/main/java/ \
+  -srctestfolder /src/test/java/ \
+  -binjavafolder /target/classes \
+  -bintestfolder /target/test-classes \
+  -dependencies astor/examples/libs/junit-4.4.jar \
+  -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true 
+  
+java -cp /home/shin/apr-trial/astor/target/astor-0.0.2-SNAPSHOT-jar-with-dependencies.jar fr.inria.main.evolution.AstorMain \
+  -location astor/examples/math_70 \
+  -mode jgenprog \
+  -scope package \
+  -failing org.apache.commons.math.analysis.solvers.BisectionSolverTest \
+  -dependencies /home/shin/.m2/repository/junit/junit/4.12/junit-4.12.jar \
+  -srcjavafolder /src/main/java/ \
+  -srctestfolder /src/test/java/ \
+  -binjavafolder /target/classes \
+  -bintestfolder /target/test-classes \
+  -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true 
+  
+
+java -cp /home/shin/apr-trial/astor/target/astor-0.0.2-SNAPSHOT-jar-with-dependencies.jar fr.inria.main.evolution.AstorMain \
+  -location apr-example/ -mode jgenprog -scope package
+  -failing jp.ac.osakau.apr.CalculatorTest \
+  -dependencies /home/shin/.m2/repository/junit/junit/4.12/junit-4.12.jar \
+  -srcjavafolder /src/main/java/ \
+  -srctestfolder /src/test/java/ \
+  -binjavafolder /target/classes \
+  -bintestfolder /target/test-classes \
+  -flthreshold 0.5 -seed 10 -maxtime 100 -stopfirst true 
+  
 ########
 java -cp target/astor-0.0.2-SNAPSHOT-jar-with-dependencies.jar fr.inria.main.evolution.AstorMain \
   -location examples/math_70 \
