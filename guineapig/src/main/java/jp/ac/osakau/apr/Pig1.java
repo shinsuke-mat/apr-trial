@@ -2,6 +2,9 @@ package jp.ac.osakau.apr;
 
 public class Pig1 {
 
+	public static void main(String args[]) {
+		System.out.println(new Pig1().countPrimes(103));
+	}
 	// 与えられた整数以下の素数をカウントする
 	// bug:
 	//   n自体の素数がカウントされないので，nが素数のときに結果が-1になる
@@ -9,6 +12,7 @@ public class Pig1 {
 	//   期待していたforの修正は出てこない．ループまるごと書き換えは厳しい？
 	//   一方で全く期待していないisPrime()関数内でのn--修正が生まれた．
 	//   isPrime()自体はおかしい結果になるが，countPrimes()は正しくなる不思議．
+	//   isPrime()のループ条件をMath.sqrt(n)としておくと上の謎修正は通らなくなる．
 	public int countPrimes(int n) {
 		int s = 0;
 		for (int i = 2; i < n; i++) { // bug here. "<" ではなく "<=" であるべき
@@ -22,8 +26,10 @@ public class Pig1 {
 	}
 
 	private boolean isPrime(int n) {
+		if (n < 2) return false;
 		for (int i = 2; i <= n / 2; i++) {
-			// n--;
+		//for (int i = 2; i <= Math.sqrt(n); i++) {
+			//n--;
 			if (n % i == 0) {
 				return false;
 			}
