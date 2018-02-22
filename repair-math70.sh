@@ -1,5 +1,5 @@
 #!/bin/bash
-. common.sh
+. util.sh
 
 ###
 _echo ">> Compile and test an example project (math_70)"
