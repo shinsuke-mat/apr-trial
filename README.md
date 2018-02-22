@@ -1,9 +1,11 @@
-# APRのお試し手順
-Astorのcloneから，サンプルプロジェクトへのAstor適用の手順を示したリポジトリ
+# APR（Astor）のお試し手順
+[Astor](https://github.com/SpoonLabs/astor)の実行手順を示したリポジトリ
 
-Astor実行に独特の癖があるので全手順をスクリプト化
+GitHubからのAstorのclone ～ サンプルプロジェクトへのAstor適用の手順を記載
 
-## ディレクトリ構成
+Astor実行には独特の癖があるので全手順をスクリプト化
+
+### ディレクトリ構成
 `guineapig/`
 - APRの適用対象となるサンプルプロジェクト
 - Pig1: 素数カウントのバグ → 適切な修正は無理，オーバーフィット修正は可能
